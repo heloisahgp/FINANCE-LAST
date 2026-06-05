@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conciliação Iugu | Fluxo de Caixa — Lastlink</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700;800;900&family=Montserrat:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ─── LASTLINK TOKENS ─── */
+  :root {
+    --ll-green:       #34E03C;
+    --ll-green-deep:  #25C42D;
+    --ll-green-soft:  #E4FBE5;
+    --ll-ink:         #0B1D25;
+    --ll-900:         #111111;
+    --ll-800:         #1a1a1a;
+    --ll-700:         #333333;
+    --ll-600:         #434343;
+    --ll-500:         #666666;
+    --ll-400:         #9E9E9E;
+    --ll-300:         #B7B7B7;
+    --ll-250:         #CCCCCC;
+    --ll-200:         #D9D9D9;
+    --ll-150:         #EFEFEF;
+    --ll-100:         #F3F3F3;
+    --ll-white:       #FFFFFF;
+
+    --shadow-sm:    0 1px 2px rgba(11,29,37,0.06), 0 1px 3px rgba(11,29,37,0.10);
+    --shadow-md:    0 4px 12px rgba(11,29,37,0.10), 0 2px 4px rgba(11,29,37,0.06);
+    --shadow-lg:    0 18px 40px rgba(11,29,37,0.16), 0 6px 14px rgba(11,29,37,0.08);
+    --shadow-green: 0 8px 28px rgba(52,224,60,0.35);
+
+    --r-xs:   6px;
+    --r-sm:   10px;
+    --r-md:   16px;
+    --r-lg:   24px;
+    --r-xl:   32px;
+    --r-pill: 999px;
+
+    --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px;
+    --sp-5: 24px; --sp-6: 32px; --sp-7: 48px;
+
+    --font-display: 'Lexend', sans-serif;
+    --font-body:    'Montserrat', sans-serif;
+    --font-mono:    'DM Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--ll-100);
+    color: var(--ll-700);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ═══════════════════════════════════
+     UPLOAD SCREEN
+  ═══════════════════════════════════ */
+  #upload-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background: var(--ll-ink);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* grain texture overlay */
+  #upload-screen::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    pointer-events: none;
+    opacity: .4;
+    z-index: 0;
+  }
+
+  /* green glow */
+  #upload-screen::after {
+    content: '';
+    position: fixed;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(52,224,60,.08) 0%, transparent 65%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .upload-inner {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Lastlink logo mark — SVG inline (network/share glyph, white) */
+  .ll-mark {
+    width: 36px; height: 36px;
+    margin-bottom: var(--sp-5);
+  }
+
+  .upload-eyebrow {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--ll-green);
+    margin-bottom: var(--sp-3);
+    text-align: center;
+  }
+
+  .upload-headline {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(28px, 5vw, 40px);
+    line-height: .98;
+    letter-spacing: -.02em;
+    color: var(--ll-white);
+    text-align: center;
+    margin-bottom: var(--sp-2);
+  }
+
+  .upload-headline span { color: var(--ll-green); }
+
+  .upload-sub {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--ll-300);
+    text-align: center;
+    line-height: 1.6;
+    margin-bottom: var(--sp-6);
+  }
+
+  /* dark card */
+  .upload-card {
+    width: 100%;
+    background: var(--ll-900);
+    border: 1.5px solid var(--ll-green);
+    border-radius: var(--r-lg);
+    padding: var(--sp-6);
+    box-shadow: var(--shadow-green);
+  }
+
+  .drop-zone {
+    border: 2px dashed rgba(52,224,60,.3);
+    border-radius: var(--r-md);
+    padding: 36px 24px;
+    cursor: pointer;
+    transition: all .2s;
+    position: relative;
+    margin-bottom: var(--sp-4);
+    text-align: center;
+  }
+
+  .drop-zone:hover, .drop-zone.dragging {
+    border-color: var(--ll-green);
+    background: rgba(52,224,60,.04);
+  }
+
+  .drop-zone input[type=file] {
+    position: absolute; inset: 0;
+    opacity: 0; cursor: pointer;
+    width: 100%; height: 100%;
+  }
+
+  .drop-icon {
+    display: block;
+    margin-bottom: var(--sp-3);
+  }
+
+  .drop-icon svg { width: 32px; height: 32px; stroke: var(--ll-green); }
+
+  .drop-label {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ll-white);
+    margin-bottom: var(--sp-1);
+  }
+
+  .drop-hint {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ll-500);
+  }
+
+  .file-selected {
+    display: none;
+    align-items: center;
+    gap: var(--sp-2);
+    background: rgba(52,224,60,.08);
+    border: 1px solid rgba(52,224,60,.3);
+    border-radius: var(--r-sm);
+    padding: 9px 14px;
+    margin-bottom: var(--sp-3);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ll-green);
+  }
+
+  .spec-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    justify-content: center;
+    margin-bottom: var(--sp-5);
+  }
+
+  .spec-pill {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    background: rgba(52,224,60,.08);
+    border: 1px solid rgba(52,224,60,.2);
+    color: var(--ll-green);
+    padding: 3px 10px;
+    border-radius: var(--r-pill);
+    letter-spacing: .3px;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--ll-green);
+    border: none;
+    border-radius: var(--r-pill);
+    color: #000;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background .15s, box-shadow .15s, transform .1s;
+    box-shadow: var(--shadow-green);
+  }
+
+  .btn-primary:hover { background: var(--ll-green-deep); }
+  .btn-primary:active { transform: scale(.99); }
+  .btn-primary:disabled {
+    background: var(--ll-800);
+    color: var(--ll-500);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
+  /* ═══════════════════════════════════
+     LOADING
+  ═══════════════════════════════════ */
+  #loading-screen {
+    min-height: 100vh;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-4);
+    background: var(--ll-ink);
+  }
+
+  .loader-ring {
+    width: 44px; height: 44px;
+    border: 3px solid rgba(52,224,60,.2);
+    border-top-color: var(--ll-green);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loader-text {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ll-400);
+  }
+
+  /* ═══════════════════════════════════
+     DASHBOARD
+  ═══════════════════════════════════ */
+  #dashboard-screen { display: none; }
+
+  /* HEADER */
+  .app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--sp-6);
+    height: 56px;
+    background: var(--ll-ink);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    gap: var(--sp-4);
+  }
+
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+  }
+
+  .header-logo-mark {
+    width: 22px; height: 22px;
+    flex-shrink: 0;
+  }
+
+  .header-wordmark {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: -.01em;
+    color: var(--ll-white);
+  }
+
+  .header-divider {
+    width: 1px; height: 20px;
+    background: rgba(255,255,255,.12);
+  }
+
+  .header-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--ll-green);
+    letter-spacing: -.01em;
+  }
+
+  .header-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ll-400);
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    padding: 3px 10px;
+    border-radius: var(--r-pill);
+    letter-spacing: .3px;
+  }
+
+  .btn-ghost {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: 6px 14px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: var(--r-pill);
+    color: var(--ll-300);
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    letter-spacing: .2px;
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--ll-green);
+    color: var(--ll-green);
+  }
+
+  /* LAYOUT */
+  .app-body {
+    display: grid;
+    grid-template-columns: 252px 1fr;
+    min-height: calc(100vh - 56px);
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    background: var(--ll-ink);
+    border-right: 1px solid rgba(255,255,255,.07);
+    overflow-y: auto;
+    height: calc(100vh - 56px);
+    position: sticky;
+    top: 56px;
+    padding-bottom: var(--sp-5);
+  }
+
+  .sidebar-section {
+    padding: var(--sp-4) 0 var(--sp-2);
+  }
+
+  .sidebar-label {
+    font-family: var(--font-body);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--ll-500);
+    padding: 0 var(--sp-4) var(--sp-2);
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 8px var(--sp-4);
+    cursor: pointer;
+    transition: background .12s;
+    border-left: 2px solid transparent;
+    gap: var(--sp-2);
+  }
+
+  .nav-item:hover { background: rgba(52,224,60,.05); }
+
+  .nav-item.active {
+    background: rgba(52,224,60,.08);
+    border-left-color: var(--ll-green);
+  }
+
+  .nav-item.active .nav-date { color: var(--ll-green); }
+
+  .nav-date {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ll-300);
+    flex: 1;
+  }
+
+  .nav-saldo {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .nav-saldo.pos { color: var(--ll-green); }
+  .nav-saldo.neg { color: #f87171; }
+
+  .nav-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .nav-dot.pix    { background: var(--ll-green); box-shadow: 0 0 4px var(--ll-green); }
+  .nav-dot.normal { background: rgba(255,255,255,.12); }
+
+  .sidebar-sep {
+    height: 1px;
+    background: rgba(255,255,255,.06);
+    margin: var(--sp-2) 0;
+  }
+
+  /* CONTENT */
+  .content {
+    padding: var(--sp-6) var(--sp-6);
+    background: var(--ll-100);
+    overflow-y: auto;
+    min-width: 0;
+  }
+
+  /* PAGE HEADER */
+  .page-hd {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-3);
+    margin-bottom: var(--sp-5);
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 26px;
+    letter-spacing: -.03em;
+    line-height: .98;
+    color: var(--ll-ink);
+  }
+
+  .page-sub {
+    font-size: 12px;
+    color: var(--ll-400);
+    font-weight: 500;
+  }
+
+  .wd-chip {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    background: var(--ll-green-soft);
+    color: var(--ll-green-deep);
+    padding: 2px 8px;
+    border-radius: var(--r-pill);
+    border: 1px solid rgba(37,196,45,.25);
+    margin-left: var(--sp-2);
+    vertical-align: middle;
+    font-weight: 600;
+  }
+
+  /* BANNER */
+  .banner {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--ll-200);
+    border: 1px solid var(--ll-200);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    margin-bottom: var(--sp-6);
+    box-shadow: var(--shadow-md);
+  }
+
+  .banner-cell {
+    background: var(--ll-white);
+    padding: var(--sp-4) var(--sp-5);
+    text-align: center;
+    position: relative;
+  }
+
+  .banner-cell::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .banner-cell.pos::after { background: var(--ll-green); }
+  .banner-cell.neg::after { background: #f87171; }
+  .banner-cell.neu::after { background: var(--ll-ink); }
+
+  .banner-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--ll-400);
+    margin-bottom: var(--sp-2);
+  }
+
+  .banner-value {
+    font-family: var(--font-mono);
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .banner-value.pos { color: var(--ll-green-deep); }
+  .banner-value.neg { color: #dc2626; }
+  .banner-value.neu { color: var(--ll-ink); }
+
+  /* KPI CARDS */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--sp-3);
+    margin-bottom: var(--sp-6);
+  }
+
+  .kpi {
+    background: var(--ll-white);
+    border: 1px solid var(--ll-200);
+    border-radius: var(--r-md);
+    padding: var(--sp-4);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .kpi-icon-chip {
+    width: 36px; height: 36px;
+    border-radius: var(--r-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--sp-3);
+    font-size: 16px;
+  }
+
+  .kpi-icon-chip.green { background: var(--ll-green-soft); }
+  .kpi-icon-chip.red   { background: #fef2f2; }
+  .kpi-icon-chip.ink   { background: var(--ll-150); }
+  .kpi-icon-chip.amber { background: #fffbeb; }
+
+  .kpi-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--ll-400);
+    margin-bottom: var(--sp-1);
+  }
+
+  .kpi-value {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .kpi-value.pos { color: var(--ll-green-deep); }
+  .kpi-value.neg { color: #dc2626; }
+  .kpi-value.ink { color: var(--ll-ink); }
+  .kpi-value.amb { color: #d97706; }
+
+  /* ALERT */
+  .alert-pix {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    background: var(--ll-ink);
+    border: 1.5px solid var(--ll-green);
+    border-radius: var(--r-md);
+    padding: var(--sp-3) var(--sp-4);
+    margin-bottom: var(--sp-4);
+    box-shadow: var(--shadow-green);
+  }
+
+  .alert-pix-dot {
+    width: 8px; height: 8px;
+    background: var(--ll-green);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--ll-green);
+    flex-shrink: 0;
+  }
+
+  .alert-pix-text {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ll-green);
+  }
+
+  .alert-pix-sub {
+    font-size: 12px;
+    color: var(--ll-300);
+    margin-top: 2px;
+  }
+
+  /* SECTION */
+  .section-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    margin-bottom: var(--sp-3);
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--ll-400);
+    white-space: nowrap;
+  }
+
+  .section-rule {
+    flex: 1;
+    height: 1px;
+    background: var(--ll-200);
+  }
+
+  /* TABLE */
+  .table-box {
+    background: var(--ll-white);
+    border: 1px solid var(--ll-200);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    margin-bottom: var(--sp-6);
+    box-shadow: var(--shadow-sm);
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  thead tr { background: var(--ll-100); border-bottom: 1px solid var(--ll-200); }
+
+  th {
+    padding: 10px 16px;
+    text-align: left;
+    font-family: var(--font-body);
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--ll-400);
+    white-space: nowrap;
+  }
+
+  th.r { text-align: right; }
+
+  td {
+    padding: 10px 16px;
+    border-top: 1px solid var(--ll-150);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ll-600);
+    white-space: nowrap;
+  }
+
+  td.label-cell {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ll-700);
+  }
+
+  td.r { text-align: right; }
+  tr:hover td { background: var(--ll-100); }
+  tr.click { cursor: pointer; }
+
+  .val-p  { color: var(--ll-green-deep) !important; font-weight: 600; }
+  .val-n  { color: #dc2626 !important; font-weight: 600; }
+  .val-em { color: var(--ll-250) !important; }
+
+  /* BADGES */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 9px;
+    border-radius: var(--r-pill);
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .3px;
+    white-space: nowrap;
+  }
+
+  .b-fatura    { background: rgba(11,29,37,.07);  color: var(--ll-ink);      border: 1px solid rgba(11,29,37,.15); }
+  .b-entre     { background: #fffbeb;              color: #92400e;            border: 1px solid #fde68a; }
+  .b-terceiros { background: rgba(52,224,60,.1);   color: var(--ll-green-deep); border: 1px solid rgba(52,224,60,.3); }
+  .b-deposito  { background: var(--ll-green-soft); color: var(--ll-green-deep); border: 1px solid rgba(37,196,45,.3); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--ll-200); border-radius: 2px; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .fu   { animation: fadeUp .35s ease both; }
+  .fu1  { animation-delay: .04s; }
+  .fu2  { animation-delay: .09s; }
+  .fu3  { animation-delay: .14s; }
+  .fu4  { animation-delay: .19s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fu { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ UPLOAD ═══ -->
+<div id="upload-screen">
+  <div class="upload-inner">
+
+    <!-- Lastlink mark (network/share glyph, white) -->
+    <svg class="ll-mark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="18" cy="8"  r="4" fill="#34E03C"/>
+      <circle cx="8"  cy="26" r="4" fill="white"/>
+      <circle cx="28" cy="26" r="4" fill="white"/>
+      <line x1="18" y1="12" x2="8"  y2="22" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <line x1="18" y1="12" x2="28" y2="22" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <line x1="10"  y1="26" x2="26" y2="26" stroke="rgba(255,255,255,.4)" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+
+    <p class="upload-eyebrow">Lastlink · Financeiro</p>
+
+    <h1 class="upload-headline">
+      Conciliação Iugu<br><span>Fluxo de Caixa.</span>
+    </h1>
+
+    <p class="upload-sub">
+      Anexe o relatório exportado do Iugu e visualize<br>
+      entradas, saídas e saldo por data — tudo no navegador.
+    </p>
+
+    <div class="upload-card">
+      <div class="drop-zone" id="drop-zone">
+        <input type="file" id="file-input" accept=".csv">
+        <span class="drop-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+        </span>
+        <div class="drop-label">Arraste o arquivo ou clique para selecionar</div>
+        <div class="drop-hint">account_balance.csv · separador ponto e vírgula</div>
+      </div>
+
+      <div class="file-selected" id="file-selected">
+        <span>✓</span>
+        <span id="file-name-label">—</span>
+      </div>
+
+      <div class="spec-row">
+        <span class="spec-pill">Data</span>
+        <span class="spec-pill">Valor</span>
+        <span class="spec-pill">Histórico</span>
+        <span class="spec-pill">Tipo de Movimentação</span>
+      </div>
+
+      <button class="btn-primary" id="btn-process" disabled onclick="processFile()">
+        Processar relatório
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ LOADING ═══ -->
+<div id="loading-screen">
+  <div class="loader-ring"></div>
+  <div class="loader-text" id="loader-text">Lendo arquivo…</div>
+</div>
+
+<!-- ═══ DASHBOARD ═══ -->
+<div id="dashboard-screen">
+
+  <header class="app-header">
+    <div class="header-brand">
+      <svg class="header-logo-mark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="18" cy="8"  r="4" fill="#34E03C"/>
+        <circle cx="8"  cy="26" r="4" fill="white"/>
+        <circle cx="28" cy="26" r="4" fill="white"/>
+        <line x1="18" y1="12" x2="8"  y2="22" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        <line x1="18" y1="12" x2="28" y2="22" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        <line x1="10"  y1="26" x2="26" y2="26" stroke="rgba(255,255,255,.4)" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="header-wordmark">Lastlink</span>
+      <div class="header-divider"></div>
+      <span class="header-title">Conciliação Iugu · Fluxo de Caixa</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="header-meta" id="header-meta">—</div>
+      <button class="btn-ghost" onclick="resetApp()">← Novo arquivo</button>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="content" id="content"></main>
+  </div>
+
+</div>
+
+<script>
+// ════════════════════════════════════════
+//  GLOBALS
+// ════════════════════════════════════════
+let DATA = {}, PERIOD = '', TOTAL_ROWS = 0, currentView = null, selectedFile = null;
+const WD = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+// ════════════════════════════════════════
+//  UPLOAD
+// ════════════════════════════════════════
+const dropZone   = document.getElementById('drop-zone');
+const fileInput  = document.getElementById('file-input');
+const btnProcess = document.getElementById('btn-process');
+const fileSelDiv = document.getElementById('file-selected');
+const fileLabel  = document.getElementById('file-name-label');
+
+fileInput.addEventListener('change', e => { if (e.target.files[0]) setFile(e.target.files[0]); });
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragging'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragging'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('dragging');
+  if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
+});
+
+function setFile(f) {
+  selectedFile = f;
+  fileLabel.textContent = f.name + ' (' + (f.size / 1024).toFixed(0) + ' KB)';
+  fileSelDiv.style.display = 'flex';
+  btnProcess.disabled = false;
+}
+
+// ════════════════════════════════════════
+//  CSV PARSER
+// ════════════════════════════════════════
+function parseCSV(text) {
+  const firstLine = text.split('\n')[0];
+  const sep = firstLine.includes(';') ? ';' : ',';
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  const headers = lines[0].split(sep).map(h => h.trim().replace(/^"|"$/g, ''));
+
+  const iData  = headers.findIndex(h => h === 'Data');
+  const iValor = headers.findIndex(h => h === 'Valor');
+  const iHist  = headers.findIndex(h => /hist.rico/i.test(h) || h === 'Historico');
+  const iTipo  = headers.findIndex(h => /movimenta/i.test(h));
+
+  const missing = [iData<0&&'Data', iValor<0&&'Valor', iHist<0&&'Histórico', iTipo<0&&'Tipo de Movimentação'].filter(Boolean);
+  if (missing.length) throw new Error('Colunas não encontradas: ' + missing.join(', ') + '\nDetectado: ' + headers.join(', '));
+
+  const records = [];
+  for (let i = 1; i < lines.length; i++) {
+    const row = splitLine(lines[i], sep);
+    if (row.length < Math.max(iData, iValor, iHist, iTipo) + 1) continue;
+    const data  = row[iData]?.trim().replace(/^"|"$/g,'') || '';
+    const vRaw  = row[iValor]?.trim().replace(/^"|"$/g,'') || '0';
+    const hist  = row[iHist]?.trim().replace(/^"|"$/g,'') || '';
+    const tipo  = row[iTipo]?.trim().replace(/^"|"$/g,'') || '';
+    if (!data || !hist) continue;
+    const valor = parseFloat(vRaw.replace(/\./g,'').replace(',','.'));
+    if (isNaN(valor)) continue;
+    const histLimpo = hist.split('#')[0].trim().replace(/:$/, '').trim();
+    records.push({ data, valor, historico: histLimpo, tipo });
+  }
+  return records;
+}
+
+function splitLine(line, sep) {
+  const out = []; let cur = ''; let q = false;
+  for (const c of line) {
+    if (c === '"') { q = !q; continue; }
+    if (c === sep && !q) { out.push(cur); cur = ''; continue; }
+    cur += c;
+  }
+  out.push(cur); return out;
+}
+
+// ════════════════════════════════════════
+//  AGGREGATE
+// ════════════════════════════════════════
+function aggregate(records) {
+  const map = {};
+  for (const r of records) {
+    const key = `${r.data}||${r.historico}||${r.tipo}`;
+    if (!map[key]) map[key] = { data: r.data, historico: r.historico, tipo: r.tipo, entrada: 0, saida: 0, qtd: 0 };
+    if (r.valor > 0) map[key].entrada += r.valor;
+    else             map[key].saida   += r.valor;
+    map[key].qtd++;
+  }
+  const byDate = {};
+  for (const row of Object.values(map)) {
+    const { data, ...rest } = row;
+    rest.entrada = r2(rest.entrada); rest.saida = r2(rest.saida); rest.total = r2(rest.entrada + rest.saida);
+    if (!byDate[data]) byDate[data] = [];
+    byDate[data].push(rest);
+  }
+  return byDate;
+}
+
+const r2 = v => Math.round(v * 100) / 100;
+
+// ════════════════════════════════════════
+//  PROCESS
+// ════════════════════════════════════════
+async function processFile() {
+  if (!selectedFile) return;
+  show('loading-screen');
+  setLoader('Lendo arquivo…'); await sleep(80);
+  const text = await readFile(selectedFile);
+  const lineCount = (text.match(/\n/g) || []).length;
+  setLoader('Processando ' + lineCount.toLocaleString('pt-BR') + ' linhas…'); await sleep(80);
+  let records;
+  try { records = parseCSV(text); }
+  catch(e) { alert('Erro ao ler o CSV:\n' + e.message); show('upload-screen'); return; }
+  TOTAL_ROWS = records.length;
+  setLoader('Consolidando ' + TOTAL_ROWS.toLocaleString('pt-BR') + ' registros…'); await sleep(80);
+  DATA = aggregate(records);
+  const dates = sortedDates();
+  PERIOD = dates[0].substring(3) + ' · ' + dates[0].substring(0,5) + ' → ' + dates[dates.length-1].substring(0,5);
+  await sleep(60);
+  buildDashboard();
+  show('dashboard-screen');
+}
+
+const readFile = f => new Promise((res, rej) => { const r = new FileReader(); r.onload = e => res(e.target.result); r.onerror = rej; r.readAsText(f, 'utf-8'); });
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const setLoader = t => { document.getElementById('loader-text').textContent = t; };
+
+function show(id) {
+  ['upload-screen','loading-screen','dashboard-screen'].forEach(s => {
+    const el = document.getElementById(s);
+    if (s === 'loading-screen') el.style.display = s === id ? 'flex' : 'none';
+    else el.style.display = s === id ? 'block' : 'none';
+  });
+}
+
+// ════════════════════════════════════════
+//  DASHBOARD BUILD
+// ════════════════════════════════════════
+function buildDashboard() {
+  document.getElementById('header-meta').textContent = PERIOD + ' · ' + TOTAL_ROWS.toLocaleString('pt-BR') + ' registros';
+  buildSidebar(); renderGeral();
+}
+
+function sortedDates() {
+  return Object.keys(DATA).sort((a,b) => {
+    const [da,ma,ya] = a.split('/').map(Number);
+    const [db,mb,yb] = b.split('/').map(Number);
+    return new Date(ya,ma-1,da) - new Date(yb,mb-1,db);
+  });
+}
+
+function dailyTotals(rows) {
+  let e=0, s=0, q=0;
+  rows.forEach(r => { e+=r.entrada; s+=r.saida; q+=r.qtd; });
+  return { entrada:e, saida:s, saldo:e+s, qtd:q };
+}
+
+function hasPix(rows) { return rows.some(r => r.tipo === 'Transferência de Terceiros'); }
+
+function wd(dateStr) {
+  const [d,m,y] = dateStr.split('/').map(Number);
+  return WD[new Date(y,m-1,d).getDay()];
+}
+
+const fmt  = v => new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' }).format(v);
+const fmtN = v => new Intl.NumberFormat('pt-BR').format(v);
+
+function badge(tipo) {
+  const map = {
+    'Fatura':                     ['b-fatura',    'Fatura'],
+    'Transferência entre contas': ['b-entre',     'Entre Contas'],
+    'Transferência de Terceiros': ['b-terceiros', 'PIX / Terceiros'],
+    'Depósito':                   ['b-deposito',  'Depósito'],
+  };
+  const [cls, lbl] = map[tipo] || ['b-fatura', tipo];
+  return `<span class="badge ${cls}">${lbl}</span>`;
+}
+
+// SIDEBAR
+function buildSidebar() {
+  const dates = sortedDates();
+  let html = `
+    <div class="sidebar-section">
+      <div class="sidebar-label">Visão</div>
+      <div class="nav-item ${currentView==='geral'?'active':''}" id="nav-geral" onclick="renderGeral()">
+        <span class="nav-dot normal"></span>
+        <span class="nav-date" style="font-family:var(--font-display);font-weight:700;font-size:12px">Visão Geral</span>
+      </div>
+    </div>
+    <div class="sidebar-sep"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Por data (${dates.length} dias)</div>`;
+
+  html += dates.map(d => {
+    const { saldo } = dailyTotals(DATA[d]);
+    const pix = hasPix(DATA[d]);
+    return `<div class="nav-item" id="nav-${d.replace(/\//g,'-')}" onclick="renderDate('${d}')">
+      <span class="nav-dot ${pix?'pix':'normal'}"></span>
+      <span class="nav-date">${d.substring(0,5)}</span>
+      <span class="nav-saldo ${saldo>=0?'pos':'neg'}">${fmt(saldo)}</span>
+    </div>`;
+  }).join('');
+
+  html += `</div>`;
+  document.getElementById('sidebar').innerHTML = html;
+}
+
+function setActive(id) {
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+}
+
+// GERAL
+function renderGeral() {
+  currentView = 'geral'; setActive('nav-geral');
+  let tE=0, tS=0, tQ=0;
+  const byHist = {};
+  Object.values(DATA).flat().forEach(r => {
+    tE+=r.entrada; tS+=r.saida; tQ+=r.qtd;
+    const key = r.historico+'||'+r.tipo;
+    if (!byHist[key]) byHist[key]={ historico:r.historico, tipo:r.tipo, entrada:0, saida:0, total:0, qtd:0 };
+    byHist[key].entrada+=r.entrada; byHist[key].saida+=r.saida;
+    byHist[key].total+=r.total; byHist[key].qtd+=r.qtd;
+  });
+  const histRows = Object.values(byHist)
+    .map(r => ({ ...r, entrada:r2(r.entrada), saida:r2(r.saida), total:r2(r.total) }))
+    .sort((a,b) => b.entrada - a.entrada);
+  const dateRows = sortedDates().map(d => ({ d, ...dailyTotals(DATA[d]) }));
+  const saldo = r2(tE + tS);
+
+  document.getElementById('content').innerHTML = `
+    <div class="page-hd fu"><div class="page-title">Visão Geral</div><div class="page-sub">${sortedDates().length} dias · ${fmtN(TOTAL_ROWS)} registros</div></div>
+
+    <div class="banner fu fu1">
+      <div class="banner-cell pos"><div class="banner-label">Total Entradas</div><div class="banner-value pos">${fmt(tE)}</div></div>
+      <div class="banner-cell neg"><div class="banner-label">Total Saídas</div><div class="banner-value neg">${fmt(tS)}</div></div>
+      <div class="banner-cell neu"><div class="banner-label">Saldo Líquido</div><div class="banner-value neu">${fmt(saldo)}</div></div>
+    </div>
+
+    <div class="section-row fu fu2"><div class="section-title">Saldo diário</div><div class="section-rule"></div></div>
+    <div class="table-box fu fu2">
+      <table><thead><tr>
+        <th>Data</th><th>Dia</th>
+        <th class="r">Entradas</th><th class="r">Saídas</th><th class="r">Saldo</th><th class="r">Operações</th>
+      </tr></thead><tbody>
+        ${dateRows.map(r=>`<tr class="click" onclick="renderDate('${r.d}')">
+          <td><span style="font-family:var(--font-mono)">${r.d}</span></td>
+          <td style="color:var(--ll-400);font-size:11px">${wd(r.d)}</td>
+          <td class="r val-p">${fmt(r.entrada)}</td>
+          <td class="r val-n">${fmt(r.saida)}</td>
+          <td class="r ${r.saldo>=0?'val-p':'val-n'}">${fmt(r.saldo)}</td>
+          <td class="r">${fmtN(r.qtd)}</td>
+        </tr>`).join('')}
+      </tbody></table>
+    </div>
+
+    <div class="section-row fu fu3"><div class="section-title">Consolidado por histórico</div><div class="section-rule"></div></div>
+    <div class="table-box fu fu3">
+      <table><thead><tr>
+        <th>Histórico</th><th>Tipo</th><th class="r">Qtd</th>
+        <th class="r">Entradas</th><th class="r">Saídas</th><th class="r">Total</th>
+      </tr></thead><tbody>
+        ${histRows.map(r=>`<tr>
+          <td class="label-cell">${r.historico}</td>
+          <td>${badge(r.tipo)}</td>
+          <td class="r">${fmtN(r.qtd)}</td>
+          <td class="r">${r.entrada>0?`<span class="val-p">${fmt(r.entrada)}</span>`:'<span class="val-em">—</span>'}</td>
+          <td class="r">${r.saida<0?`<span class="val-n">${fmt(r.saida)}</span>`:'<span class="val-em">—</span>'}</td>
+          <td class="r ${r.total>=0?'val-p':'val-n'}">${fmt(r.total)}</td>
+        </tr>`).join('')}
+      </tbody></table>
+    </div>`;
+}
+
+// DATE DETAIL
+function renderDate(date) {
+  currentView = date; setActive('nav-'+date.replace(/\//g,'-'));
+  const rows = DATA[date] || [];
+  const { entrada, saida, saldo, qtd } = dailyTotals(rows);
+  const pixRows = rows.filter(r => r.tipo === 'Transferência de Terceiros');
+  const sorted  = [...rows].sort((a,b) => b.entrada - a.entrada);
+
+  document.getElementById('content').innerHTML = `
+    <div class="page-hd fu">
+      <div class="page-title">${date.substring(0,5)}<span class="wd-chip">${wd(date)}</span></div>
+      <div class="page-sub">${date.substring(6)}</div>
+    </div>
+
+    ${pixRows.length ? `<div class="alert-pix fu">
+      <div class="alert-pix-dot"></div>
+      <div>
+        <div class="alert-pix-text">Transferência PIX detectada</div>
+        <div class="alert-pix-sub">${pixRows.length} operação(ões) · ${fmt(pixRows.reduce((s,r)=>s+r.saida,0))}</div>
+      </div>
+    </div>` : ''}
+
+    <div class="kpi-grid fu fu1">
+      <div class="kpi">
+        <div class="kpi-icon-chip green">↑</div>
+        <div class="kpi-label">Entradas</div>
+        <div class="kpi-value pos">${fmt(entrada)}</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon-chip red">↓</div>
+        <div class="kpi-label">Saídas</div>
+        <div class="kpi-value neg">${fmt(saida)}</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon-chip ink">◎</div>
+        <div class="kpi-label">Saldo Líquido</div>
+        <div class="kpi-value ${saldo>=0?'pos':'neg'} ink">${fmt(saldo)}</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon-chip amber">#</div>
+        <div class="kpi-label">Operações</div>
+        <div class="kpi-value amb">${fmtN(qtd)}</div>
+      </div>
+    </div>
+
+    <div class="section-row fu fu2"><div class="section-title">Detalhamento por histórico</div><div class="section-rule"></div></div>
+    <div class="table-box fu fu2">
+      <table><thead><tr>
+        <th>Histórico</th><th>Tipo</th><th class="r">Qtd</th>
+        <th class="r">Entradas</th><th class="r">Saídas</th><th class="r">Total</th>
+      </tr></thead><tbody>
+        ${sorted.map(r=>`<tr>
+          <td class="label-cell">${r.historico}</td>
+          <td>${badge(r.tipo)}</td>
+          <td class="r">${fmtN(r.qtd)}</td>
+          <td class="r">${r.entrada>0?`<span class="val-p">${fmt(r.entrada)}</span>`:'<span class="val-em">—</span>'}</td>
+          <td class="r">${r.saida<0?`<span class="val-n">${fmt(r.saida)}</span>`:'<span class="val-em">—</span>'}</td>
+          <td class="r ${r.total>=0?'val-p':'val-n'}">${fmt(r.total)}</td>
+        </tr>`).join('')}
+      </tbody></table>
+    </div>`;
+
+  document.getElementById('nav-'+date.replace(/\//g,'-'))?.scrollIntoView({ block:'nearest', behavior:'smooth' });
+}
+
+// RESET
+function resetApp() {
+  DATA={}; selectedFile=null; currentView=null;
+  document.getElementById('file-input').value='';
+  fileSelDiv.style.display='none'; btnProcess.disabled=true;
+  show('upload-screen');
+}
+</script>
+</body>
+</html>
